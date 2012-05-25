@@ -175,7 +175,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-io-2.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jfreechart-1.0.14-swt.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jfreechart-1.0.14.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/postgresql-jdbc-8.2-505-copy.jdbc3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate-3.6.10.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/velocity-1.7-dep.jar"/>
@@ -188,5 +187,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-orm.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-web.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-tx.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/postgresql-9.1-901.jdbc3.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
