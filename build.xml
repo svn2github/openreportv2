@@ -9,7 +9,7 @@
 	<property name="web-inf.classes" value="${web-inf}/classes" />
 	<property name="web-inf.lib" value="${web-inf}/lib" />
 	<property name="distribution" value="/openreports/distributions" />
-	<property name="version" value="3.2.0" />
+	<property name="version" value="3.3.0" />
 
 	<target name="compile">
 
@@ -19,7 +19,7 @@
 
 		<delete failonerror="false">
 			<fileset dir="${web-inf.lib}">
-				<include name="openreports-*.jar" />
+				<include name="openreportsv2-*.jar" />
 			</fileset>
 		</delete>
 
@@ -53,7 +53,7 @@
 
 	<target name="war" depends="jar">
 
-		<war destfile="${deploy}/openreports.war" webxml="${web-inf}/web.xml">
+		<war destfile="${deploy}/openreportsv2.war" webxml="${web-inf}/web.xml">
 
 			<fileset dir="${WebRoot}">
 				<include name="**/*.vm" />
