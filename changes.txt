@@ -1,7 +1,18 @@
 ----------------------
-OpenReports Change Log
+OpenReportsV2 Change Log
 ----------------------
 
+-----------------
+OpenReports 3.3.0
+-----------------
+
+- Dashboard with Alerts Conditional Scheduling
+- Global Scheduler Admin
+- Drill Down Chart Reports
+- Reporting Statistics
+- Upgraded Jasper Reports, BIRT, Quartz (1.8) and Hibernate (3.6) to the latest versions.
+- Password encryption when storing in the DB tables.
+- Encrypted password for UserID:password(admin:admin) is admin:=?UTF-8?B?YWRtaW4=?=
 -----------------
 OpenReports 3.2.0
 -----------------
