@@ -29,18 +29,30 @@ import org.displaytag.exception.DecoratorException;
 import org.displaytag.properties.MediaTypeEnum;
 import org.efs.openreports.providers.DateProvider;
 
-public class DateColumnDecorator implements DisplaytagColumnDecorator 
-{
-	protected SimpleDateFormat dateFormat;		
+public class DateColumnDecorator implements DisplaytagColumnDecorator {
+	private String format = "MM/dd/yyyy";
 
-	public Object decorate(Object object, PageContext pgeContext, MediaTypeEnum mediaTypeEnum) throws DecoratorException 
-	{
-		if (object == null)	return null;		
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	protected SimpleDateFormat dateFormat = null;
+
+	@Override
+	public Object decorate(Object object, PageContext pgeContext,
+			MediaTypeEnum mediaTypeEnum) throws DecoratorException {
+		if (object == null)
+			return null;
+		dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format((Date) object);
 	}
 
-	public void setDateProvider(DateProvider dateProvider) 
-	{
-		dateFormat = new SimpleDateFormat(dateProvider.getDateFormat().toPattern());
+	public void setDateProvider(DateProvider dateProvider) {
+		dateFormat = new SimpleDateFormat(dateProvider.getDateFormat()
+				.toPattern());
 	}
 }

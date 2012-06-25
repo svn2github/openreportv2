@@ -22,48 +22,40 @@ package org.efs.openreports.util;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
-public class DisplayProperty implements Serializable
-{	
+public class DisplayProperty implements Serializable {
 	private static final long serialVersionUID = -3446381557089608497L;
-	
-	private String name;
+
+	private final String name;
 	private String displayName;
 	private String decorator;
-	
-	public DisplayProperty(String name, String type)
-	{
-		this.name = name;		
+
+	public DisplayProperty(String name, String type) {
+		this.name = name;
 		this.displayName = "";
-				
-		StringTokenizer st = new StringTokenizer(name, " ");		
-		while (st.hasMoreElements())
-		{
+
+		StringTokenizer st = new StringTokenizer(name.replaceAll("_", " "), " ");
+		while (st.hasMoreElements()) {
 			String element = (String) st.nextElement();
-			displayName = displayName + element.substring(0,1).toUpperCase() + element.substring(1) + " ";
+			displayName = displayName + element.substring(0, 1).toUpperCase()
+					+ element.substring(1) + " ";
 		}
-		
-		if (type.equals("java.sql.Date"))
-		{			
+
+		if (type.equals("java.sql.Date")) {
 			decorator = "dateColumnDecorator";
-		}
-		else if (type.equals("java.sql.Timestamp"))
-		{			
+		} else if (type.equals("java.sql.Timestamp")) {
 			decorator = "dateTimeColumnDecorator";
-		}		
+		}
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
-	
-	public String getDisplayName()
-	{		
+
+	public String getDisplayName() {
 		return displayName;
-	}	
-	
-	public String getDecorator()
-	{
+	}
+
+	public String getDecorator() {
 		return decorator;
 	}
 }
