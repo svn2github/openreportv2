@@ -1,53 +1,62 @@
-<!DOCTYPE xwork PUBLIC "-//OpenSymphony Group//XWork 1.0//EN" "http://www.opensymphony.com/xwork/xwork-1.0.dtd">
-
-<xwork>
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
 
     <include file="struts-default.xml"/>
     
     <package name="default" extends="struts-default"> 
     
-		<result-types>
-            <result-type name="queryReportTemplate" class="org.efs.openreports.dispatcher.QueryReportTemplateResult"/>  		
+        <result-types>
+            <result-type name="queryReportTemplate" class="org.efs.openreports.dispatcher.QueryReportTemplateResult"/>          
         </result-types>
-		
-    	<interceptors>
-    	    <interceptor name="security" class="org.efs.openreports.interceptors.SecurityInterceptor"/>
-			<interceptor name="scheduler" class="org.efs.openreports.interceptors.SchedulerRoleInterceptor"/>
-			<interceptor name="chartAdmin" class="org.efs.openreports.interceptors.ChartAdminRoleInterceptor"/>
-			<interceptor name="dataSourceAdmin" class="org.efs.openreports.interceptors.DataSourceAdminRoleInterceptor"/>
-			<interceptor name="groupAdmin" class="org.efs.openreports.interceptors.GroupAdminRoleInterceptor"/>
-			<interceptor name="logViewer" class="org.efs.openreports.interceptors.LogViewerRoleInterceptor"/>
-			<interceptor name="parameterAdmin" class="org.efs.openreports.interceptors.ParameterAdminRoleInterceptor"/>
-			<interceptor name="reportAdmin" class="org.efs.openreports.interceptors.ReportAdminRoleInterceptor"/>
-			<interceptor name="rootAdmin" class="org.efs.openreports.interceptors.RootAdminRoleInterceptor"/>
-			<interceptor name="userAdmin" class="org.efs.openreports.interceptors.UserAdminRoleInterceptor"/>
-			<interceptor name="alertAdmin" class="org.efs.openreports.interceptors.AlertAdminRoleInterceptor"/>
-			<interceptor name="alert" class="org.efs.openreports.interceptors.AlertUserRoleInterceptor"/>
-			<interceptor name="dashboard" class="org.efs.openreports.interceptors.DashboardRoleInterceptor"/>
-			<interceptor name="uploader" class="org.efs.openreports.interceptors.UploaderRoleInterceptor"/>
-			<interceptor name="schedulerAdmin" class="org.efs.openreports.interceptors.SchedulerAdminRoleInterceptor"/>
-			<interceptor name="breadcrumbs" class="org.efs.openreports.interceptors.BreadcrumbsInterceptor"/>
-												
-    	  	<interceptor-stack name="defaultStack">    
-    	  		<interceptor-ref name="servlet-config"/>
-    	  		<interceptor-ref name="fileUpload"/> 
-                <interceptor-ref name="static-params"/>
+        
+        <interceptors>
+        <interceptor name="security" class="org.efs.openreports.interceptors.SecurityInterceptor"/>
+        <interceptor name="scheduler" class="org.efs.openreports.interceptors.SchedulerRoleInterceptor"/>
+        <interceptor name="chartAdmin" class="org.efs.openreports.interceptors.ChartAdminRoleInterceptor"/>
+        <interceptor name="dataSourceAdmin" class="org.efs.openreports.interceptors.DataSourceAdminRoleInterceptor"/>
+        <interceptor name="groupAdmin" class="org.efs.openreports.interceptors.GroupAdminRoleInterceptor"/>
+        <interceptor name="logViewer" class="org.efs.openreports.interceptors.LogViewerRoleInterceptor"/>
+        <interceptor name="parameterAdmin" class="org.efs.openreports.interceptors.ParameterAdminRoleInterceptor"/>
+        <interceptor name="reportAdmin" class="org.efs.openreports.interceptors.ReportAdminRoleInterceptor"/>
+        <interceptor name="rootAdmin" class="org.efs.openreports.interceptors.RootAdminRoleInterceptor"/>
+        <interceptor name="userAdmin" class="org.efs.openreports.interceptors.UserAdminRoleInterceptor"/>
+        <interceptor name="alertAdmin" class="org.efs.openreports.interceptors.AlertAdminRoleInterceptor"/>
+        <interceptor name="alert" class="org.efs.openreports.interceptors.AlertUserRoleInterceptor"/>
+        <interceptor name="dashboard" class="org.efs.openreports.interceptors.DashboardRoleInterceptor"/>
+        <interceptor name="uploader" class="org.efs.openreports.interceptors.UploaderRoleInterceptor"/>
+        <interceptor name="schedulerAdmin" class="org.efs.openreports.interceptors.SchedulerAdminRoleInterceptor"/>
+        <interceptor name="breadcrumbs" class="org.efs.openreports.interceptors.BreadcrumbsInterceptor"/>
+        <interceptor name="timer" class="com.opensymphony.xwork2.interceptor.TimerInterceptor"/>
+        <interceptor name="logger" class="com.opensymphony.xwork2.interceptor.LoggingInterceptor"/>
+        <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor"/>
+        <interceptor name="fileUpload" class="org.apache.struts2.interceptor.FileUploadInterceptor"/>
+        <interceptor name="staticParams" class="com.opensymphony.xwork2.interceptor.StaticParametersInterceptor"/>
+        <interceptor name="params" class="com.opensymphony.xwork2.interceptor.ParametersInterceptor"/>
+
+                                                
+            <interceptor-stack name="defaultStack">    
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="fileUpload"/> 
+                <interceptor-ref name="staticParams"/>
                 <interceptor-ref name="params"/>                
                 <interceptor-ref name="breadcrumbs"/>
-          	</interceptor-stack>           
-          	<interceptor-stack name="defaultStackWithSecurity">  
-    	  	    <interceptor-ref name="defaultStack"/> 				
+            </interceptor-stack>           
+            <interceptor-stack name="defaultStackWithSecurity">  
+                <interceptor-ref name="defaultStack"/>              
                 <interceptor-ref name="security"/>                               
-          	</interceptor-stack> 
-            <interceptor-stack name="debugStack">
-                <interceptor-ref name="timer"/>
-                <interceptor-ref name="logger"/>
-            </interceptor-stack>            
+            </interceptor-stack> 
+                <interceptor-stack name="debugStack">
+                        <interceptor-ref name="timer"/>
+                    <interceptor-ref name="logger"/>
+                </interceptor-stack>            
         </interceptors>   
     
-    	<default-interceptor-ref name="defaultStackWithSecurity"/>  
-    	
-    	<global-results>
+        <default-interceptor-ref name="defaultStackWithSecurity"/>  
+        
+        <global-results>
             <result name="login" >
                 <param name="location">Login.jsp</param>
             </result>
@@ -64,16 +73,16 @@
                 <param name="location">Login.jsp</param>
             </result>      
             <result name="success" type="redirect"> 
-    			<param name="location">reportGroup.action</param> 
-    		</result>  
-    		<result name="dashboard" type="redirect"> 
-    			<param name="location">dashboard.action</param> 
-    		</result>           
-    		<interceptor-ref name="defaultStack"/>     		 
-        </action>		    
-		
-		<action name="logout" class="org.efs.openreports.actions.LogoutAction">
-			<result name="success">
+                <param name="location">reportGroup.action</param> 
+            </result>  
+            <result name="dashboard" type="redirect"> 
+                <param name="location">dashboard.action</param> 
+            </result>           
+            <interceptor-ref name="defaultStack"/>           
+        </action>           
+        
+        <action name="logout" class="org.efs.openreports.actions.LogoutAction">
+            <result name="success">
                 <param name="location">Login.jsp</param>
             </result>           
         </action> 
@@ -91,11 +100,11 @@
                 <param name="location">ReportGroup.jsp</param>
             </result>              
             <result name="success" type="redirect"> 
-    			<param name="location">reportList.action</param> 
-    		</result>             
+                <param name="location">reportList.action</param> 
+            </result>             
         </action>   
              
-      	<action name="reportList" class="org.efs.openreports.actions.ReportListAction">
+        <action name="reportList" class="org.efs.openreports.actions.ReportListAction">
              <result name="success">
                 <param name="location">ReportList.jsp</param>
             </result>                       
@@ -106,8 +115,8 @@
                 <param name="location">ReportDetail.jsp</param>
             </result>
             <result name="success" type="chain"> 
-    			<param name="actionName">reportOptions</param> 
-    		</result>                
+                <param name="actionName">reportOptions</param> 
+            </result>                
         </action>
         
         <action name="reportOptions" class="org.efs.openreports.actions.ReportOptionsAction">
@@ -115,26 +124,26 @@
                 <param name="location">ReportOptions.jsp</param>
             </result>
             <result name="success" type="chain"> 
-    			<param name="actionName">reportRun</param> 
-    		</result>                
-    		<result name="queryReport" type="chain"> 
-    			<param name="actionName">queryReport</param> 
-    		</result>     
-    		<result name="chartReport" type="chain"> 
-    			<param name="actionName">chartReport</param> 
-    		</result>  
-    		<result name="jxlsReport" type="chain"> 
-    			<param name="actionName">jxlsReport</param> 
-    		</result>   
-    		<result name="jpivot" type="redirect"> 
-    			<param name="location">jpivot.action</param> 
-    		</result>     
-    		<result name="reportSchedule" type="redirect"> 
-    			<param name="location">reportSchedule.action</param> 
-    		</result>   
-    		<result name="generatedReports" type="redirect"> 
-    			<param name="location">listScheduledReports.action</param> 
-    		</result>  		 
+                <param name="actionName">reportRun</param> 
+            </result>                
+            <result name="queryReport" type="chain"> 
+                <param name="actionName">queryReport</param> 
+            </result>     
+            <result name="chartReport" type="chain"> 
+                <param name="actionName">chartReport</param> 
+            </result>  
+            <result name="jxlsReport" type="chain"> 
+                <param name="actionName">jxlsReport</param> 
+            </result>   
+            <result name="jpivot" type="redirect"> 
+                <param name="location">jpivot.action</param> 
+            </result>     
+            <result name="reportSchedule" type="redirect"> 
+                <param name="location">reportSchedule.action</param> 
+            </result>   
+            <result name="generatedReports" type="redirect"> 
+                <param name="location">listScheduledReports.action</param> 
+            </result>        
         </action>
         
         <action name="reportSchedule" class="org.efs.openreports.actions.ReportScheduleAction">
@@ -142,66 +151,66 @@
                 <param name="location">ReportSchedule.jsp</param>
             </result>     
             <result name="success" type="redirect"> 
-    			<param name="location">listScheduledReports.action</param> 
-    		</result>  
-    		<interceptor-ref name="defaultStackWithSecurity"/>
+                <param name="location">listScheduledReports.action</param> 
+            </result>  
+            <interceptor-ref name="defaultStackWithSecurity"/>
             <interceptor-ref name="scheduler"/>                                
         </action>
         
         <action name="reportRun" class="org.efs.openreports.actions.ReportRunAction">                                                    
-			<result name="success" type="redirect"> 
-    			<param name="location">reportViewer.action</param> 
-    		</result>
+            <result name="success" type="redirect"> 
+                <param name="location">reportViewer.action</param> 
+            </result>
         </action>
         
-		<action name="executeReport" class="org.efs.openreports.actions.ExecuteReportAction">           
-			<result name="reportDetail" type="chain"> 
-    			<param name="actionName">reportDetail</param> 
-    		</result>
+        <action name="executeReport" class="org.efs.openreports.actions.ExecuteReportAction">           
+            <result name="reportDetail" type="chain"> 
+                <param name="actionName">reportDetail</param> 
+            </result>
             <result name="success" type="chain"> 
-    			<param name="actionName">reportRun</param> 
-    		</result>
-			<result name="queryReport" type="chain"> 
-    			<param name="actionName">queryReport</param> 
-    		</result>   
-    		<result name="chartReport" type="chain"> 
-    			<param name="actionName">chartReport</param> 
-    		</result>     	
-    		<result name="jxlsReport" type="chain"> 
-    			<param name="actionName">jxlsReport</param> 
-    		</result> 		
-    		<result name="jpivot" type="redirect"> 
-    			<param name="location">jpivot.action</param> 
-    		</result>
-			<interceptor-ref name="defaultStack"/>     
+                <param name="actionName">reportRun</param> 
+            </result>
+            <result name="queryReport" type="chain"> 
+                <param name="actionName">queryReport</param> 
+            </result>   
+            <result name="chartReport" type="chain"> 
+                <param name="actionName">chartReport</param> 
+            </result>       
+            <result name="jxlsReport" type="chain"> 
+                <param name="actionName">jxlsReport</param> 
+            </result>       
+            <result name="jpivot" type="redirect"> 
+                <param name="location">jpivot.action</param> 
+            </result>
+            <interceptor-ref name="defaultStack"/>     
         </action>
         
         <action name="executeReportAuthenticated" class="org.efs.openreports.actions.ExecuteReportAction">           
             <result name="success" type="chain"> 
-    			<param name="actionName">reportRun</param> 
-    		</result>
-			<result name="queryReport" type="chain"> 
-    			<param name="actionName">queryReport</param> 
-    		</result>  
-    		<result name="chartReport" type="chain"> 
-    			<param name="actionName">chartReport</param> 
-    		</result>      					   
-    		<result name="jxlsReport" type="chain"> 
-    			<param name="actionName">jxlsReport</param> 
-    		</result>    
-    		<result name="jpivot" type="redirect"> 
-    			<param name="location">jpivot.action</param> 
-    		</result>
-        </action>				
-		
-		<action name="reportViewer" class="org.efs.openreports.actions.ReportViewerAction">                                                    						
-			<result name="success">
+                <param name="actionName">reportRun</param> 
+            </result>
+            <result name="queryReport" type="chain"> 
+                <param name="actionName">queryReport</param> 
+            </result>  
+            <result name="chartReport" type="chain"> 
+                <param name="actionName">chartReport</param> 
+            </result>                          
+            <result name="jxlsReport" type="chain"> 
+                <param name="actionName">jxlsReport</param> 
+            </result>    
+            <result name="jpivot" type="redirect"> 
+                <param name="location">jpivot.action</param> 
+            </result>
+        </action>               
+        
+        <action name="reportViewer" class="org.efs.openreports.actions.ReportViewerAction">                                                                         
+            <result name="success">
                 <param name="location">ReportViewer.jsp</param>
             </result>
         </action>
-		
+        
         <action name="queryReport" class="org.efs.openreports.actions.QueryReportAction">                                                    
-        	<result name="success" type="redirect">
+            <result name="success" type="redirect">
                 <param name="location">queryReportResult.action</param>
             </result>
             <result name="jfreeReport">
@@ -210,20 +219,23 @@
             <result name="jxlsReport" type="redirect">
                 <param name="location">jxlsReportResult.action</param>
             </result>   
-        </action>		
-        
+        </action>       
+
+        <action name="queryReportExport" class="org.efs.openreports.actions.QueryReportExportAction"/>                                                    
+
+                
         <action name="queryReportResult" class="org.efs.openreports.actions.QueryReportResultAction">                                                    
-        	<result name="success" >
+            <result name="success" >
                 <param name="location">QueryReport.jsp</param>
             </result>
             <result name="queryReportTemplate" type="queryReportTemplate"/>           
         </action>
         
-		<action name="jxlsReport" class="org.efs.openreports.actions.JXLSReportAction">   			                                                   	
+        <action name="jxlsReport" class="org.efs.openreports.actions.JXLSReportAction">                                                                 
         </action>
         
         <action name="chartReport" class="org.efs.openreports.actions.ChartReportAction">                                                    
-        	<result name="success" >
+            <result name="success" >
                 <param name="location">ChartReport.jsp</param>
             </result>
         </action>
@@ -232,53 +244,53 @@
         </action>
         
         <action name="jpivot" 
-    		class="org.efs.openreports.actions.JPivotAction">
-    		<result name="success">
-    			<param name="location">JPivot.jsp</param>
-    		</result>
-    	</action>
+            class="org.efs.openreports.actions.JPivotAction">
+            <result name="success">
+                <param name="location">JPivot.jsp</param>
+            </result>
+        </action>
         
         <action name="userAdmin" class="org.efs.openreports.actions.UserAdminAction">
             <result name="input">
                 <param name="location">UserAdmin.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">reportGroup.action</param> 
-    		</result> 
+                <param name="location">reportGroup.action</param> 
+            </result> 
             <result name="dashboard" type="redirect"> 
-    			<param name="location">dashboard.action</param> 
-    		</result>      		              
+                <param name="location">dashboard.action</param> 
+            </result>                         
         </action>
         
         <action name="userAdminAlerts" class="org.efs.openreports.actions.admin.EditUserAlertsAction">            
             <result name="input" type="chain">             
-    			<param name="actionName">userAdmin</param> 
-    		</result>      		
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="actionName">userAdmin</param> 
+            </result>           
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="alertAdmin"/>                 
         </action>
         
         <action name="reportAdmin" class="org.efs.openreports.actions.admin.ReportAdminAction">
-	        <result name="success">
+            <result name="success">
                 <param name="location">ReportAdmin.jsp</param>
-    		</result>             
+            </result>             
         </action>
         
         <action name="editProperties" class="org.efs.openreports.actions.admin.EditPropertiesAction">
-	        <result name="input">
+            <result name="input">
                 <param name="location">EditProperties.jsp</param>
-            </result>  	      
+            </result>         
             <result name="success" type="redirect"> 
-    			<param name="location">editProperties.action</param> 
-    		</result>    
+                <param name="location">editProperties.action</param> 
+            </result>    
             <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="rootAdmin"/>                    
         </action>      
         
-        <action name="imageCleanup" class="org.efs.openreports.actions.admin.ImageCleanupAction">	        	      
+        <action name="imageCleanup" class="org.efs.openreports.actions.admin.ImageCleanupAction">                     
             <result name="success" type="redirect"> 
-    			<param name="location">editProperties.action</param> 
-    		</result>    
+                <param name="location">editProperties.action</param> 
+            </result>    
             <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="rootAdmin"/>                    
         </action>      
@@ -287,7 +299,7 @@
             <result name="success" >
                 <param name="location">UploadReportFiles.jsp</param>
             </result>
-			<interceptor-ref name="defaultStackWithSecurity"/> 			   
+            <interceptor-ref name="defaultStackWithSecurity"/>             
             <interceptor-ref name="uploader"/>                       
         </action>     
         
@@ -298,7 +310,7 @@
             <result name="success">
                 <param name="location">AddReportFileDialogResponse.jsp</param>
             </result> 
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="uploader"/>             
         </action>
         
@@ -387,9 +399,9 @@
                 <param name="location">EditDataSource.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listDataSources.action</param> 
-    		</result>   
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listDataSources.action</param> 
+            </result>   
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="dataSourceAdmin"/>             
         </action>
         
@@ -400,7 +412,7 @@
             <result name="success">
                 <param name="location">AddDialogResponse.jsp</param>
             </result> 
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="dataSourceAdmin"/>             
         </action>
         
@@ -409,9 +421,9 @@
                 <param name="location">EditGroup.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listGroups.action</param> 
-    		</result>        
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listGroups.action</param> 
+            </result>        
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="groupAdmin"/>  
         </action>
         
@@ -420,9 +432,9 @@
                 <param name="location">EditUser.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listUsers.action</param> 
-    		</result>    
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listUsers.action</param> 
+            </result>    
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="rootAdmin"/>               
         </action>        
          
@@ -431,9 +443,9 @@
                 <param name="location">EditGroupUsers.jsp</param>
             </result>  
             <result name="success" type="redirect"> 
-    			<param name="location">listGroups.action</param> 
-    		</result>          
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listGroups.action</param> 
+            </result>          
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="groupAdmin"/>                
         </action>
         
@@ -442,9 +454,9 @@
                 <param name="location">EditReport.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listReports.action</param> 
-    		</result>  
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listReports.action</param> 
+            </result>  
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="reportAdmin"/>           
         </action>
         
@@ -453,33 +465,33 @@
                 <param name="location">EditReportGroups.jsp</param>
             </result>  
             <result name="success" type="redirect"> 
-    			<param name="location">listReports.action</param> 
-    		</result>          
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listReports.action</param> 
+            </result>          
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="reportAdmin"/>                
         </action>
         
         <action name="editReportParameterMap" class="org.efs.openreports.actions.admin.EditReportParameterMapAction">
             <result name="input" type="chain">             
-    			<param name="actionName">editReport</param> 
-    		</result>   
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="actionName">editReport</param> 
+            </result>   
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="reportAdmin"/>                
         </action>
         
         <action name="editUserAlerts" class="org.efs.openreports.actions.admin.EditUserAlertsAction">           
             <result name="success" type="chain">             
-    			<param name="actionName">editUser</param> 
-    		</result>  
-    		<interceptor-ref name="defaultStackWithSecurity"/>     
-    		<interceptor-ref name="alertAdmin"/>           
+                <param name="actionName">editUser</param> 
+            </result>  
+            <interceptor-ref name="defaultStackWithSecurity"/>     
+            <interceptor-ref name="alertAdmin"/>           
         </action>
         
         <action name="editExportOptions" class="org.efs.openreports.actions.admin.EditExportOptionsAction">            
             <result name="success" type="chain">             
-    			<param name="actionName">editReport</param> 
-    		</result>  
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="actionName">editReport</param> 
+            </result>  
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="reportAdmin"/>                
         </action>
         
@@ -488,9 +500,9 @@
                 <param name="location">EditReportParameter.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listReportParameters.action</param> 
-    		</result>     
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listReportParameters.action</param> 
+            </result>     
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="parameterAdmin"/>          
         </action>
         
@@ -501,7 +513,7 @@
             <result name="success" type="velocity">
                 <param name="location">AddDialogResponse.jsp</param>
             </result> 
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="parameterAdmin"/>             
         </action>
         
@@ -510,9 +522,9 @@
                 <param name="location">EditChart.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listCharts.action</param> 
-    		</result>     
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+                <param name="location">listCharts.action</param> 
+            </result>     
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="chartAdmin"/>              
         </action>        
         
@@ -523,7 +535,7 @@
             <result name="success">
                 <param name="location">AddDialogResponse.jsp</param>
             </result> 
-    		<interceptor-ref name="defaultStackWithSecurity"/> 
+            <interceptor-ref name="defaultStackWithSecurity"/> 
             <interceptor-ref name="chartAdmin"/>             
         </action>
         
@@ -532,14 +544,14 @@
                 <param name="location">EditAlert.jsp</param>
             </result>
             <result name="success" type="redirect"> 
-    			<param name="location">listAlerts.action</param> 
-    		</result>     
-    		<interceptor-ref name="defaultStackWithSecurity"/>    
-			<interceptor-ref name="alertAdmin"/>            
+                <param name="location">listAlerts.action</param> 
+            </result>     
+            <interceptor-ref name="defaultStackWithSecurity"/>    
+            <interceptor-ref name="alertAdmin"/>            
         </action>
         
         <action name="deleteDataSource" class="org.efs.openreports.actions.admin.DeleteDataSourceAction">
-         	<result name="input" >
+            <result name="input" >
                 <param name="location">DeleteDataSource.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -561,7 +573,7 @@
         </action>
         
         <action name="deleteUser" class="org.efs.openreports.actions.admin.DeleteUserAction">
-	        <result name="input" >
+            <result name="input" >
                 <param name="location">DeleteUser.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -572,7 +584,7 @@
         </action>
         
         <action name="deleteReport" class="org.efs.openreports.actions.admin.DeleteReportAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteReport.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -583,7 +595,7 @@
         </action>
         
         <action name="deleteReportParameter" class="org.efs.openreports.actions.admin.DeleteReportParameterAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteReportParameter.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -594,7 +606,7 @@
         </action> 
         
         <action name="deleteChart" class="org.efs.openreports.actions.admin.DeleteChartAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteChart.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -605,7 +617,7 @@
         </action> 
         
         <action name="deleteAlert" class="org.efs.openreports.actions.admin.DeleteAlertAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteAlert.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -631,8 +643,8 @@
             <interceptor-ref name="scheduler"/>  
         </action>
    
-   		<action name="deleteScheduledReport" class="org.efs.openreports.actions.schedule.DeleteScheduledReportAction">
-         	<result name="input">
+        <action name="deleteScheduledReport" class="org.efs.openreports.actions.schedule.DeleteScheduledReportAction">
+            <result name="input">
                 <param name="location">DeleteScheduledReport.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -643,7 +655,7 @@
         </action>
         
         <action name="changeScheduleState" class="org.efs.openreports.actions.schedule.ChangeScheduleStateAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">ChangeScheduleState.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -658,14 +670,14 @@
                 <param name="location">ReportSchedule.jsp</param>
             </result>     
             <result name="success" type="redirect"> 
-    			<param name="location">schedulerAdmin.action</param> 
-    		</result>  
-    		<interceptor-ref name="defaultStackWithSecurity"/>
+                <param name="location">schedulerAdmin.action</param> 
+            </result>  
+            <interceptor-ref name="defaultStackWithSecurity"/>
             <interceptor-ref name="schedulerAdmin"/>                                
         </action>
         
         <action name="deleteScheduledReportByUser" class="org.efs.openreports.actions.schedule.DeleteScheduledReportAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteScheduledReport.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -676,7 +688,7 @@
         </action>      
         
         <action name="deleteGeneratedReport" class="org.efs.openreports.actions.admin.DeleteGeneratedReportAction">
-         	<result name="input">
+            <result name="input">
                 <param name="location">DeleteGeneratedReport.jsp</param>
             </result>
             <result name="success" type="redirect">
@@ -684,7 +696,7 @@
             </result>                                 
         </action> 
         
-        <action name="dataImport" class="org.efs.openreports.actions.admin.DataImportAction">	      
+        <action name="dataImport" class="org.efs.openreports.actions.admin.DataImportAction">         
             <result name="success" >
                 <param name="location">DataImport.jsp</param>
             </result>  
@@ -692,7 +704,7 @@
             <interceptor-ref name="rootAdmin"/>                  
         </action>    
         
-        <action name="dataExport" class="org.efs.openreports.actions.admin.DataExportAction">	      
+        <action name="dataExport" class="org.efs.openreports.actions.admin.DataExportAction">         
             <result name="success" >
                 <param name="location">DataExport.jsp</param>
             </result>  
@@ -702,4 +714,4 @@
         
     </package>  
 
-</xwork>
+</struts>
