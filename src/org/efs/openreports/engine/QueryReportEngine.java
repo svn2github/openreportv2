@@ -54,172 +54,150 @@ import org.efs.openreports.util.displaytag.MockDisplayTablePageContext;
 import org.efs.openreports.util.displaytag.MockDisplayTableTag;
 
 /**
-*  QueryReport ReportEngine implementation.
-* 
-* @author Erik Swenson
-* 
-*/
-public class QueryReportEngine extends ReportEngine
-{
-	protected static Logger log = Logger.getLogger(QueryReportEngine.class);		
-	
+ * QueryReport ReportEngine implementation.
+ * 
+ * @author Erik Swenson
+ * 
+ */
+public class QueryReportEngine extends ReportEngine {
+	protected static Logger log = Logger.getLogger(QueryReportEngine.class);
+
 	public QueryReportEngine(DataSourceProvider dataSourceProvider,
-			DirectoryProvider directoryProvider, PropertiesProvider propertiesProvider)
-	{
-		super(dataSourceProvider,directoryProvider, propertiesProvider);
+			DirectoryProvider directoryProvider,
+			PropertiesProvider propertiesProvider) {
+		super(dataSourceProvider, directoryProvider, propertiesProvider);
 	}
-	
-	public ReportEngineOutput generateReport(ReportEngineInput input) throws ProviderException
-	{
+
+	@Override
+	public ReportEngineOutput generateReport(ReportEngineInput input)
+			throws ProviderException {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rs = null;
-
-		try
-		{
+		try {
 			Report report = input.getReport();
-			Map<String,Object> parameters = input.getParameters();
-			
+			Map<String, Object> parameters = input.getParameters();
 			ReportDataSource dataSource = report.getDataSource();
 			conn = dataSourceProvider.getConnection(dataSource.getId());
 
-			if (parameters == null || parameters.isEmpty())
-			{
+			if (parameters == null || parameters.isEmpty()) {
 				pStmt = conn.prepareStatement(report.getQuery());
-			}
-			else
-			{
+			} else {
 				// Use JasperReports Query logic to parse parameters in chart
 				// queries
-
 				JRDesignQuery query = new JRDesignQuery();
 				query.setText(report.getQuery());
-
 				// convert parameters to JRDesignParameters so they can be
 				// parsed
-				Map<String,JRDesignParameter> jrParameters = ORUtil.buildJRDesignParameters(parameters);
-
-				pStmt = JRQueryExecuter.getStatement(query, jrParameters, parameters,
-						conn);
+				Map<String, JRDesignParameter> jrParameters = ORUtil
+						.buildJRDesignParameters(parameters);
+				pStmt = JRQueryExecuter.getStatement(query, jrParameters,
+						parameters, conn);
 			}
 
 			ORProperty maxRows = propertiesProvider
 					.getProperty(ORProperty.QUERYREPORT_MAXROWS);
-			if (maxRows != null && maxRows.getValue() != null)
-			{
+			if (maxRows != null && maxRows.getValue() != null) {
 				pStmt.setMaxRows(Integer.parseInt(maxRows.getValue()));
 			}
 
 			rs = pStmt.executeQuery();
-
 			RowSetDynaClass rowSetDynaClass = new RowSetDynaClass(rs);
-
 			List<?> results = rowSetDynaClass.getRows();
-
 			DynaProperty[] dynaProperties = rowSetDynaClass.getDynaProperties();
-
 			DisplayProperty[] properties = new DisplayProperty[dynaProperties.length];
-			for (int i = 0; i < dynaProperties.length; i++)
-			{
-				properties[i] = new DisplayProperty(dynaProperties[i].getName(),
-						dynaProperties[i].getType().getName());
+			for (int i = 0; i < dynaProperties.length; i++) {
+				properties[i] = new DisplayProperty(
+						dynaProperties[i].getName(), dynaProperties[i]
+								.getType().getName());
 			}
 
 			rs.close();
-			
 			QueryEngineOutput output = new QueryEngineOutput();
-			
-			if (input.getExportType() == null) 
-			{
+
+			if (input.getExportType() == null) {
 				output.setResults(results);
 				output.setProperties(properties);
-			}
-			else 
-			{
+			} else {
 				// Use DisplayTag to generate scheduled QueryReports
-				MockDisplayTablePageContext pageContext = null;				
-				
-				if (input.getExportType() == ExportType.CSV) 
-				{
-					pageContext = new MockDisplayTablePageContext(MockDisplayTablePageContext.EXPORT_TYPE_CSV, applicationContext);
+				MockDisplayTablePageContext pageContext = null;
+				if (input.getExportType() == ExportType.CSV) {
+					pageContext = new MockDisplayTablePageContext(
+							MockDisplayTablePageContext.EXPORT_TYPE_CSV,
+							applicationContext);
 					output.setContentType(ReportEngineOutput.CONTENT_TYPE_CSV);
-					
-				}
-				else if (input.getExportType() == ExportType.XLS)
-				{
-					pageContext = new MockDisplayTablePageContext(MockDisplayTablePageContext.EXPORT_TYPE_XLS, applicationContext);
+
+				} else if (input.getExportType() == ExportType.XLS) {
+					pageContext = new MockDisplayTablePageContext(
+							MockDisplayTablePageContext.EXPORT_TYPE_XLS,
+							applicationContext);
 					output.setContentType(ReportEngineOutput.CONTENT_TYPE_XLS);
-				}
-				else
-				{
-					pageContext = new MockDisplayTablePageContext(MockDisplayTablePageContext.EXPORT_TYPE_PDF, applicationContext);
+				} else {
+					pageContext = new MockDisplayTablePageContext(
+							MockDisplayTablePageContext.EXPORT_TYPE_PDF,
+							applicationContext);
 					output.setContentType(ReportEngineOutput.CONTENT_TYPE_PDF);
 				}
-					
-				// create tag 
+
+				// create tag
 				MockDisplayTableTag displayTag = new MockDisplayTableTag();
 				displayTag.setPageContext(pageContext);
-				displayTag.setName(results);			
+				displayTag.setName(results);
+				// displayTag.setSize(Integer.valueOf(results.size()));
 				displayTag.doStartTag();
-					
 				// add columns
-				for (int i = 0; i < properties.length; i++)
-				{
-					ColumnTag column = new ColumnTag();					
+				for (int i = 0; i < properties.length; i++) {
+					ColumnTag column = new ColumnTag();
 					column.setParent(displayTag);
 					column.setProperty(properties[i].getName());
 					column.setTitle(properties[i].getDisplayName());
-					column.setDecorator(properties[i].getDecorator());
-					column.setPageContext(pageContext);	
+					if (null != properties[i].getDecorator()) {
+						column.setDecorator(applicationContext
+								.getBean(properties[i].getDecorator())
+								.getClass().getName());
+					}
+					column.setPageContext(pageContext);
 					column.doStartTag();
 					column.doEndTag();
 				}
-				
 				// call doAfterBody for each row in the results
-				for (int i= 0; i < results.size(); i++)
-				{
-					displayTag.doAfterBody();	
-				}				
-				
+				for (int i = 0; i < results.size(); i++) {
+					displayTag.doAfterBody();
+				}
 				// call doEndTag to perform the export
 				displayTag.doEndTag();
-				
-				HashMap<?,?> map = (HashMap<?,?>) pageContext.getRequest().getAttribute(TableTag.FILTER_CONTENT_OVERRIDE_BODY);
+
+				HashMap<?, ?> map = (HashMap<?, ?>) pageContext.getRequest()
+						.getAttribute(TableTag.FILTER_CONTENT_OVERRIDE_BODY);
 				Object content = map.get(TableTagParameters.BEAN_BODY);
-				
-				if (content instanceof String)
-				{
-					output.setContent(((String)content).getBytes());
-				}
-				else
-				{
-					output.setContent((byte[])content);
+
+				if (content instanceof String) {
+					output.setContent(((String) content).getBytes());
+				} else {
+					output.setContent((byte[]) content);
 				}
 			}
-			
 			return output;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			throw new ProviderException("Error executing report query: " + e.getMessage());			
-		}
-		finally
-		{
-			try
-			{
-				if (pStmt != null) pStmt.close();
-				if (conn != null) conn.close();
-			}
-			catch (Exception c)
-			{
+		} catch (Exception e) {
+			log.error(e);
+			throw new ProviderException("Error executing report query: "
+					+ e.getMessage());
+		} finally {
+			try {
+				if (pStmt != null)
+					pStmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception c) {
 				log.error("Error closing");
 			}
 		}
-	}	
-	
-	public List<ReportParameter> buildParameterList(Report report) throws ProviderException
-	{
-		throw new ProviderException("QueryReportEngine: buildParameterList not implemented.");
-	}		
+	}
+
+	@Override
+	public List<ReportParameter> buildParameterList(Report report)
+			throws ProviderException {
+		throw new ProviderException(
+				"QueryReportEngine: buildParameterList not implemented.");
+	}
 }

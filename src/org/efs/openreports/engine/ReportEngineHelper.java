@@ -26,56 +26,51 @@ import org.efs.openreports.providers.DirectoryProvider;
 import org.efs.openreports.providers.PropertiesProvider;
 import org.efs.openreports.providers.ProviderException;
 
-
 /**
- * ReportEngine base class. Delegates report generation to the specific ReportEngine
- * implementation for each report type.  
+ * ReportEngine base class. Delegates report generation to the specific
+ * ReportEngine implementation for each report type.
  * 
  * @author Erik Swenson
  * 
  */
 
-public class ReportEngineHelper
-{
-	protected static Logger log = Logger.getLogger(ReportEngineHelper.class.getName());
-		
-	public static ReportEngine getReportEngine(Report report, DataSourceProvider dataSourceProvider, DirectoryProvider directoryProvider, PropertiesProvider propertiesProvider) throws ProviderException
-	{		
-		ReportEngine reportEngine = null;		
-		
-		if (report.isChartReport())
-		{
-			reportEngine = new ChartReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);			
+public class ReportEngineHelper {
+	protected static Logger log = Logger.getLogger(ReportEngineHelper.class
+			.getName());
+
+	public static ReportEngine getReportEngine(Report report,
+			DataSourceProvider dataSourceProvider,
+			DirectoryProvider directoryProvider,
+			PropertiesProvider propertiesProvider) throws ProviderException {
+		ReportEngine reportEngine = null;
+		if (report.isChartReport()) {
+			reportEngine = new ChartReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
+		} else if (report.isJXLSReport()) {
+			reportEngine = new JXLSReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
+		} else if (report.isBirtReport()) {
+			reportEngine = new BirtReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
+		} else if (report.isJasperReport()) {
+			reportEngine = new JasperReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
+		} else if (report.isQueryReport()) {
+			reportEngine = new QueryReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
+		} else if (report.isVelocityReport()) {
+			reportEngine = new VelocityReportEngine(dataSourceProvider,
+					directoryProvider, propertiesProvider);
 		}
-		else if (report.isJXLSReport())
-		{
-			reportEngine = new JXLSReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);						
-		}
-		else if (report.isBirtReport())
-		{
-			reportEngine = new BirtReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);						
-		}
-		else if (report.isJasperReport())
-		{
-			reportEngine = new JasperReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);						
-		}
-		else if (report.isQueryReport())
-		{
-			reportEngine = new QueryReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);			
-		}
-        else if (report.isVelocityReport())
-        {
-            reportEngine = new VelocityReportEngine(dataSourceProvider, directoryProvider, propertiesProvider);
-        }
-		
-		if (reportEngine == null)
-		{
-			String message = report.getName() + " is invalid. Please verify report definition.";
-			
+
+		if (reportEngine == null) {
+			String message = report.getName()
+					+ " is invalid. Please verify report definition.";
+
 			log.error(message);
 			throw new ProviderException(message);
-		}		
-		
+		}
+
 		return reportEngine;
-	}	
+	}
 }
