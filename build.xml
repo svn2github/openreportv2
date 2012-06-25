@@ -47,8 +47,19 @@
 
 	<target name="jar" depends="compile">
 
-		<jar destfile="${web-inf.lib}/openreports-${version}.jar" basedir="${web-inf.classes}" />
-
+		<jar destfile="${web-inf.lib}/openreports-${version}.jar" basedir="${web-inf.classes}" >
+			<exclude name="**/openreports.properties" />
+			<exclude name="**/struts.properties" />
+			<exclude name="**/displaytag_en_US.properties" />
+			<exclude name="**/displaytag.properties" />
+			<exclude name="**/LocalStrings.properties" />
+			<exclude name="**/velocity.properties" />
+			
+			<exclude name="**/log4j.xml" />
+			<exclude name="**/hibernate.cfg.xml" />
+			<exclude name="**/struts.xml" />
+			<exclude name="**/ehcache.xml" />
+		</jar>
 	</target>
 
 	<target name="war" depends="jar">
@@ -69,8 +80,9 @@
 				<include name="**/jpivot/**" />
 				<include name="**/wcf/**" />
 				<include name="**/platform/**" />
+                <include name="**/classes/*.xml" />
+               <include name="**/classes/*.properties" />
 			</fileset>
-
 			<lib dir="${web-inf.lib}" />
 
 		</war>
