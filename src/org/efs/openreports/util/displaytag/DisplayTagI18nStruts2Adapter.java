@@ -28,31 +28,36 @@ import org.displaytag.localization.I18nResourceProvider;
 import org.displaytag.localization.LocaleResolver;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.LocaleProvider;
 import com.opensymphony.xwork2.TextProvider;
 import com.opensymphony.xwork2.TextProviderFactory;
 
-public class DisplayTagI18nStruts2Adapter implements LocaleResolver, I18nResourceProvider, LocaleProvider
-{ 
+public class DisplayTagI18nStruts2Adapter implements LocaleResolver,
+		I18nResourceProvider, LocaleProvider {
 	private final transient TextProvider textProvider;
-	
-    public DisplayTagI18nStruts2Adapter()
-    {
-        textProvider = new TextProviderFactory().createInstance(getClass(), this);
-    }
-    
-    public Locale resolveLocale(HttpServletRequest request) 
-    {    	
-        return ActionContext.getContext().getLocale();
-    }
-   
-    public Locale getLocale()
-    {    	
-        return ActionContext.getContext().getLocale();
-    }
-    
-    public String getResource(String resourceKey, String defaultValue, Tag tag, PageContext pageContext)
-    { 
-    	return textProvider.getText(resourceKey, defaultValue);      
-    }
+	private final ActionSupport as;
+
+	public DisplayTagI18nStruts2Adapter() {
+		textProvider = new TextProviderFactory().createInstance(getClass(),
+				this);
+		as = new ActionSupport();
+	}
+
+	@Override
+	public Locale resolveLocale(HttpServletRequest request) {
+		return as.getLocale();
+	}
+
+	@Override
+	public Locale getLocale() {
+		ActionContext.getContext().setLocale(null);
+		return as.getLocale();
+	}
+
+	@Override
+	public String getResource(String resourceKey, String defaultValue, Tag tag,
+			PageContext pageContext) {
+		return textProvider.getText(resourceKey, defaultValue);
+	}
 }
