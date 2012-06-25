@@ -19,28 +19,36 @@
 
 package org.efs.openreports.actions;
 
-import java.util.*;
-
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.efs.openreports.ORStatics;
-import org.efs.openreports.objects.*;
-import org.efs.openreports.providers.*;
+import org.efs.openreports.objects.Report;
+import org.efs.openreports.objects.ReportParameterMap;
+import org.efs.openreports.objects.ReportUser;
+import org.efs.openreports.providers.DateProvider;
+import org.efs.openreports.providers.ParameterProvider;
+import org.efs.openreports.providers.ProviderException;
+import org.efs.openreports.providers.ReportProvider;
 import org.efs.openreports.util.LocalStrings;
 
-public class ReportDetailAction extends ActionSupport implements SessionAware, ParameterAware
-{	
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+
+public class ReportDetailAction extends ActionSupport implements SessionAware,
+		ParameterAware {
 	private static final long serialVersionUID = 724821018564650888L;
-	
-	private Map<Object,Object> session;
-	private Map<String,Object> parameters;
-	
+
+	private Map<Object, Object> session;
+	private Map<String, Object> parameters;
+
 	private Report report;
 	private int reportId = Integer.MIN_VALUE;
-	
+
 	private String submitType;
 
 	private ParameterProvider parameterProvider;
@@ -49,194 +57,171 @@ public class ReportDetailAction extends ActionSupport implements SessionAware, P
 
 	private List<ReportParameterMap> reportParameters;
 	private int step = 0;
-	
-	private boolean displayInline;	
+
+	private boolean displayInline;
 
 	@Override
-	public String execute()
-	{
-		try
-		{
-			ReportUser user = (ReportUser) ActionContext.getContext().getSession().get(
-					ORStatics.REPORT_USER);
+	public String execute() {
+		try {
+			ReportUser user = (ReportUser) ActionContext.getContext()
+					.getSession().get(ORStatics.REPORT_USER);
 
-			report = reportProvider.getReport(new Integer(reportId));			
+			report = reportProvider.getReport(new Integer(reportId));
 
-			if (report == null)
-			{
+			if (report == null) {
 				addActionError(getText(LocalStrings.ERROR_REPORT_INVALID));
 				return ERROR;
 			}
 
-			if (!user.isValidReport(report))
-			{
+			if (!user.isValidReport(report)) {
 				addActionError(getText(LocalStrings.ERROR_REPORT_NOTAUTHORIZED));
 				return ERROR;
-			}			
+			}
 
 			report.setDisplayInline(displayInline);
 			reportParameters = report.getReportParametersByStep(step);
 
-			if (submitType == null)
-			{
-				// first time through create new map and add standard report parameters
-				HashMap<String,Object> newMap = new HashMap<String,Object>();
+			if (submitType == null) {
+				// first time through create new map and add standard report
+				// parameters
+				HashMap<String, Object> newMap = new HashMap<String, Object>();
 				newMap.put(ORStatics.USER_ID, user.getId());
 				newMap.put(ORStatics.EXTERNAL_ID, user.getExternalId());
 				newMap.put(ORStatics.USER_NAME, user.getName());
 
-				ActionContext.getContext().getSession().remove(ORStatics.REPORT_PARAMETERS);
+				ActionContext.getContext().getSession()
+						.remove(ORStatics.REPORT_PARAMETERS);
 				session.put(ORStatics.REPORT_PARAMETERS, newMap);
 				session.put(ORStatics.REPORT, report);
 
-				if (report.getParameters().size() > 0 && report.getParameters().size() != report.getSubReportParameters().size())
-				{					
-					parameterProvider.loadReportParameterValues(reportParameters, newMap);
+				if (report.getParameters().size() > 0
+						&& report.getParameters().size() != report
+								.getSubReportParameters().size()) {
+					parameterProvider.loadReportParameterValues(
+							reportParameters, newMap);
 
 					return INPUT;
-				}
-				else
-				{
+				} else {
 					return SUCCESS;
 				}
 			}
 
 			parameterProvider.validateParameters(reportParameters, parameters);
 
-			Map<String,Object> map = getReportParametersFromSession();
+			Map<String, Object> map = getReportParametersFromSession();
 
-			Map<String,Object> currentMap = parameterProvider.getReportParametersMap(reportParameters,parameters);
+			Map<String, Object> currentMap = parameterProvider
+					.getReportParametersMap(reportParameters, parameters);
 
 			map.putAll(currentMap);
 
 			session.put(ORStatics.REPORT_PARAMETERS, map);
-			
+
 			step++;
 
 			reportParameters = report.getReportParametersByStep(step);
 
-			if (reportParameters.size() > 0)
-			{
-				parameterProvider.loadReportParameterValues(reportParameters, map);
+			if (reportParameters.size() > 0) {
+				parameterProvider.loadReportParameterValues(reportParameters,
+						map);
 
 				return INPUT;
 			}
 
 			return SUCCESS;
-		}
-		catch (Exception e)
-		{			
-			Map<String,Object> map = getReportParametersFromSession();
+		} catch (Exception e) {
+			Map<String, Object> map = getReportParametersFromSession();
 
-			try
-			{
-				parameterProvider.loadReportParameterValues(reportParameters, map);
-			}
-			catch (ProviderException pe)
-			{
+			try {
+				parameterProvider.loadReportParameterValues(reportParameters,
+						map);
+			} catch (ProviderException pe) {
 				addActionError(getText(pe.getMessage()));
 			}
 
 			addActionError(getText(e.getMessage()));
 			return INPUT;
 		}
-	}    
-   
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public void setSession(Map session) 
-	{
+	public void setSession(Map session) {
 		this.session = session;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public void setParameters(Map parameters) 
-	{
+	public void setParameters(Map parameters) {
 		this.parameters = parameters;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String,Object> getReportParametersFromSession() 
-	{
+	public Map<String, Object> getReportParametersFromSession() {
 		return (Map) session.get(ORStatics.REPORT_PARAMETERS);
 	}
-		
-	public String getSubmitType()
-	{
+
+	public String getSubmitType() {
 		return submitType;
 	}
 
-	public void setSubmitType(String submitType)
-	{
+	public void setSubmitType(String submitType) {
 		this.submitType = submitType;
 	}
 
-	public int getReportId()
-	{
+	public int getReportId() {
 		return reportId;
 	}
 
-	public void setReportId(int reportId)
-	{
+	public void setReportId(int reportId) {
 		this.reportId = reportId;
 	}
 
-	public void setParameterProvider(ParameterProvider parameterProvider)
-	{
+	public void setParameterProvider(ParameterProvider parameterProvider) {
 		this.parameterProvider = parameterProvider;
 	}
 
-	public void setReportProvider(ReportProvider reportProvider)
-	{
+	public void setReportProvider(ReportProvider reportProvider) {
 		this.reportProvider = reportProvider;
 	}
 
-	public List<ReportParameterMap> getReportParameters()
-	{
+	public List<ReportParameterMap> getReportParameters() {
 		return reportParameters;
 	}
 
-	public int getStep()
-	{
+	public int getStep() {
 		return step;
 	}
 
-	public void setStep(int step)
-	{
+	public void setStep(int step) {
 		this.step = step;
 	}
-	
-	public void setDateProvider(DateProvider dateProvider)
-	{
+
+	public void setDateProvider(DateProvider dateProvider) {
 		this.dateProvider = dateProvider;
 	}
-	
-	public String getDateFormat()
-	{
+
+	public String getDateFormat() {
 		return dateProvider.getDateFormat().toPattern();
 	}
-	
-	public String getDefaultDate()
-	{
+
+	public String getDefaultDate() {
 		return dateProvider.formatDate(new Date());
 	}
-	
-	public Report getReport()
-	{
+
+	public Report getReport() {
 		return report;
 	}
-	
-	public void setReport(Report report)
-	{
+
+	public void setReport(Report report) {
 		this.report = report;
 	}
 
-	public boolean isDisplayInline()
-	{
+	public boolean isDisplayInline() {
 		return displayInline;
 	}
 
-	public void setDisplayInline(boolean displayInline)
-	{
+	public void setDisplayInline(boolean displayInline) {
 		this.displayInline = displayInline;
 	}
 }

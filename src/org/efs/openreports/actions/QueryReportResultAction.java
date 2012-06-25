@@ -31,46 +31,47 @@ import org.efs.openreports.util.DisplayProperty;
 
 import com.opensymphony.xwork2.ActionContext;
 
-public class QueryReportResultAction extends DisplayTagAction		
-{	
+public class QueryReportResultAction extends DisplayTagAction {
 	private static final long serialVersionUID = -6173123870225020481L;
 
-	protected static Logger log = Logger.getLogger(QueryReportResultAction.class);	
+	protected static Logger log = Logger
+			.getLogger(QueryReportResultAction.class);
 
 	private List results;
 	private DisplayProperty[] properties;
 
 	private Report report;
-	private Map reportParameters;	
+	private Map reportParameters;
 
-	public String execute()
-	{
-		ReportUser user = (ReportUser) ActionContext.getContext().getSession().get(
-				ORStatics.REPORT_USER);
+	@Override
+	public String execute() {
+		ReportUser user = (ReportUser) ActionContext.getContext().getSession()
+				.get(ORStatics.REPORT_USER);
 
-		report = (Report) ActionContext.getContext().getSession().get(ORStatics.REPORT);		
+		report = (Report) ActionContext.getContext().getSession()
+				.get(ORStatics.REPORT);
 		reportParameters = getReportParameterMap(user);
-		
-		results = (List) ActionContext.getContext().getSession().get(ORStatics.QUERY_REPORT_RESULTS);		
-		properties = (DisplayProperty[]) ActionContext.getContext().getSession().get(ORStatics.QUERY_REPORT_PROPERTIES);	
 
-        if (report.getFile() != null && report.getFile().endsWith(".ftl"))
-        {
-            return ORStatics.QUERY_REPORT_TEMPLATE_ACTION;
-        }
-        
+		results = (List) ActionContext.getContext().getSession()
+				.get(ORStatics.QUERY_REPORT_RESULTS);
+		properties = (DisplayProperty[]) ActionContext.getContext()
+				.getSession().get(ORStatics.QUERY_REPORT_PROPERTIES);
+
+		if (report.getFile() != null && report.getFile().endsWith(".ftl")) {
+			return ORStatics.QUERY_REPORT_TEMPLATE_ACTION;
+		}
+
 		return SUCCESS;
-	}	
+	}
 
 	@SuppressWarnings("unchecked")
-	protected Map getReportParameterMap(ReportUser user)
-	{
-		Map<String,Object> reportParameters = new HashMap<String,Object>();
+	protected Map getReportParameterMap(ReportUser user) {
+		Map<String, Object> reportParameters = new HashMap<String, Object>();
 
-		if (ActionContext.getContext().getSession().get(ORStatics.REPORT_PARAMETERS) != null)
-		{
-			reportParameters = (Map) ActionContext.getContext().getSession().get(
-					ORStatics.REPORT_PARAMETERS);
+		if (ActionContext.getContext().getSession()
+				.get(ORStatics.REPORT_PARAMETERS) != null) {
+			reportParameters = (Map) ActionContext.getContext().getSession()
+					.get(ORStatics.REPORT_PARAMETERS);
 		}
 
 		// add standard report parameters
@@ -79,25 +80,21 @@ public class QueryReportResultAction extends DisplayTagAction
 		reportParameters.put(ORStatics.USER_NAME, user.getName());
 
 		return reportParameters;
-	}	
+	}
 
-	public List getResults()
-	{
+	public List getResults() {
 		return results;
 	}
 
-	public DisplayProperty[] getProperties()
-	{
+	public DisplayProperty[] getProperties() {
 		return properties;
 	}
 
-	public Report getReport()
-	{
+	public Report getReport() {
 		return report;
 	}
 
-	public Map getReportParameters()
-	{
+	public Map getReportParameters() {
 		return reportParameters;
-	}	
+	}
 }

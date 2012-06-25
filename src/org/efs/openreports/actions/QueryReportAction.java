@@ -19,19 +19,25 @@
 
 package org.efs.openreports.actions;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.beanutils.BasicDynaBean;
 import org.apache.log4j.Logger;
+import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.efs.openreports.ORStatics;
-import org.efs.openreports.engine.JFreeReportEngine;
 import org.efs.openreports.engine.QueryReportEngine;
 import org.efs.openreports.engine.input.ReportEngineInput;
 import org.efs.openreports.engine.output.QueryEngineOutput;
-import org.efs.openreports.engine.output.ReportEngineOutput;
 import org.efs.openreports.objects.Report;
 import org.efs.openreports.objects.ReportLog;
 import org.efs.openreports.objects.ReportUser;
@@ -39,80 +45,99 @@ import org.efs.openreports.providers.DataSourceProvider;
 import org.efs.openreports.providers.DirectoryProvider;
 import org.efs.openreports.providers.PropertiesProvider;
 import org.efs.openreports.providers.ReportLogProvider;
+import org.efs.openreports.util.DisplayProperty;
 
-public class QueryReportAction extends ActionSupport implements SessionAware
-{	
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+
+public class QueryReportAction extends ActionSupport implements SessionAware,
+		ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = 5233748674680486245L;
+	private HttpServletRequest request;
+	private HttpServletResponse response;
 
 	protected static Logger log = Logger.getLogger(QueryReportAction.class);
-	
-	protected Map<Object,Object> session;
+
+	protected Map<Object, Object> session;
 
 	protected DataSourceProvider dataSourceProvider;
 	protected ReportLogProvider reportLogProvider;
 	protected PropertiesProvider propertiesProvider;
-	protected DirectoryProvider directoryProvider;	
-	
+	protected DirectoryProvider directoryProvider;
+
 	protected Report report;
-	
-	private String html;	
 
-	public String execute()
-	{
-		//remove results of any previous query report from session
-		ActionContext.getContext().getSession().remove(ORStatics.QUERY_REPORT_RESULTS);
-		ActionContext.getContext().getSession().remove(ORStatics.QUERY_REPORT_PROPERTIES);	
-		
-		ReportUser user = (ReportUser) ActionContext.getContext().getSession().get(
-				ORStatics.REPORT_USER);
+	private String html;
 
-		report = (Report) ActionContext.getContext().getSession().get(ORStatics.REPORT);
+	@Override
+	public String execute() {
+		// remove results of any previous query report from session
+		ActionContext.getContext().getSession()
+				.remove(ORStatics.QUERY_REPORT_RESULTS);
+		ActionContext.getContext().getSession()
+				.remove(ORStatics.QUERY_REPORT_PROPERTIES);
 
-		Map<String,Object> reportParameters = getReportParameterMap(user);
+		ReportUser user = (ReportUser) ActionContext.getContext().getSession()
+				.get(ORStatics.REPORT_USER);
+
+		report = (Report) ActionContext.getContext().getSession()
+				.get(ORStatics.REPORT);
+
+		Map<String, Object> reportParameters = getReportParameterMap(user);
 
 		ReportLog reportLog = new ReportLog(user, report, new Date());
 
-		try
-		{
-			log.debug("Starting Query Report: " + report.getName());
-			log.debug("Query: " + report.getQuery());
+		try {
+			log.info("Starting Query Report: " + report.getName());
+			log.info("Query: " + report.getQuery());
+			reportLogProvider.insertReportLog(reportLog);
 
-			reportLogProvider.insertReportLog(reportLog);		
-			
-			ReportEngineInput input = new ReportEngineInput(report, reportParameters);
-			
-			if (report.isJFreeReport())
-			{
-				//JFreeReportEngine jfreeReportEngine = new JFreeReportEngine(
-				//		dataSourceProvider, directoryProvider, propertiesProvider);
-				
-				//ReportEngineOutput output = jfreeReportEngine.generateReport(input);				
-				
-				//html = new String(output.getContent());
-			}
-			else
-			{
+			ReportEngineInput input = new ReportEngineInput(report,
+					reportParameters);
+			if (report.isJFreeReport()) {
+
+				log.fatal("JFREEREPORT SUPPORT HAS BEEN REMOVED AS THAT PROJECT IS DEAD");
+			} else {
 				QueryReportEngine queryReportEngine = new QueryReportEngine(
-						dataSourceProvider, directoryProvider, propertiesProvider);
-				
-				QueryEngineOutput output = (QueryEngineOutput) queryReportEngine.generateReport(input);				
-				
+						dataSourceProvider, directoryProvider,
+						propertiesProvider);
+				QueryEngineOutput output = (QueryEngineOutput) queryReportEngine
+						.generateReport(input);
+
 				session.put(ORStatics.QUERY_REPORT_RESULTS, output.getResults());
-				
-				session.put(ORStatics.QUERY_REPORT_PROPERTIES, output.getProperties());
-			}			
+
+				// TableModel tableModel = new TableModel("jmesareport",
+				// request,
+				// response);
+				// tableModel.setExportTypes(CSV, EXCEL, PDF);
+				// tableModel.setItems(getListResults(output.getResults(),
+				// output.getProperties()));
+				// tableModel.setStateAttr("restore");
+				// tableModel.autoFilterAndSort(true);
+				// session.put(
+				// "reportresults",
+				// getHtmlTable(tableModel, output.getProperties(),
+				// report.getName()));
+
+				session.put(
+						"listResults",
+						getListResults(output.getResults(),
+								output.getProperties()));
+
+				session.put(ORStatics.QUERY_REPORT_PROPERTIES,
+						output.getProperties());
+
+			}
 
 			reportLog.setEndTime(new Date());
 			reportLog.setStatus(ReportLog.STATUS_SUCCESS);
 			reportLogProvider.updateReportLog(reportLog);
 
-			log.debug("Finished Query Report: " + report.getName());
-		}
-		catch (Exception e)
-		{
+			log.info("Finished Query Report: " + report.getName());
+		} catch (Exception e) {
 
 			addActionError(e.getMessage());
-
+			e.printStackTrace();
 			log.error(e.getMessage());
 
 			reportLog.setMessage(e.getMessage());
@@ -120,30 +145,65 @@ public class QueryReportAction extends ActionSupport implements SessionAware
 
 			reportLog.setEndTime(new Date());
 
-			try
-			{
+			try {
 				reportLogProvider.updateReportLog(reportLog);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				log.error("Unable to create ReportLog: " + ex.getMessage());
 			}
 
 			return ERROR;
-		}		
-		
-		if (report.isJFreeReport()) return ORStatics.JFREEREPORT_RESULT;		
-		
-		return SUCCESS;		
-	}	
+		}
+
+		if (report.isJFreeReport())
+			return ORStatics.JFREEREPORT_RESULT;
+
+		return SUCCESS;
+	}
+
+	/*
+	 * private String getHtmlTable(TableModel tableModel, DisplayProperty[]
+	 * display, String caption) {
+	 * 
+	 * HtmlTable table = new HtmlTable(); table.setWidth("90%");
+	 * table.caption(caption); HtmlRow row = new HtmlRow(); //
+	 * row.setFilterable(true); // row.setSortable(true); for (int i = 0; i <
+	 * display.length; i++) { HtmlColumn col = new
+	 * HtmlColumn(display[i].getName()); // col.setFilterable(true);
+	 * col.setSortable(true); col.setFilterEditor(new
+	 * org.jmesa.view.html.editor.DroplistFilterEditor()); row.addColumn(col); }
+	 * 
+	 * table.setRow(row);
+	 * 
+	 * tableModel.setTable(table);
+	 * 
+	 * return tableModel.render(); }
+	 */
+
+	protected Collection getListResults(List results, DisplayProperty[] display) {
+		Collection<Map<String, String>> listResults = new ArrayList<Map<String, String>>();
+
+		for (Object result : results) {
+			BasicDynaBean bean = (BasicDynaBean) result;
+
+			Map<String, String> eachRow = new HashMap<String, String>();
+
+			for (int i = 0; i < display.length; i++) {
+				eachRow.put(
+						display[i].getName(),
+						bean.get(display[i].getName()) != null ? bean.get(
+								display[i].getName()).toString() : null);
+			}
+			listResults.add(eachRow);
+
+		}
+		return listResults;
+	}
 
 	@SuppressWarnings("unchecked")
-	protected Map<String,Object> getReportParameterMap(ReportUser user)
-	{
-		Map<String,Object> reportParameters = new HashMap<String,Object>();
+	protected Map<String, Object> getReportParameterMap(ReportUser user) {
+		Map<String, Object> reportParameters = new HashMap<String, Object>();
 
-		if (session.get(ORStatics.REPORT_PARAMETERS) != null)
-		{
+		if (session.get(ORStatics.REPORT_PARAMETERS) != null) {
 			reportParameters = (Map) session.get(ORStatics.REPORT_PARAMETERS);
 		}
 
@@ -154,40 +214,46 @@ public class QueryReportAction extends ActionSupport implements SessionAware
 
 		return reportParameters;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public void setSession(Map session) 
-	{
+	public void setSession(Map session) {
 		this.session = session;
 	}
 
-	public void setReportLogProvider(ReportLogProvider reportLogProvider)
-	{
+	public void setReportLogProvider(ReportLogProvider reportLogProvider) {
 		this.reportLogProvider = reportLogProvider;
 	}
 
-	public void setDataSourceProvider(DataSourceProvider dataSourceProvider)
-	{
+	public void setDataSourceProvider(DataSourceProvider dataSourceProvider) {
 		this.dataSourceProvider = dataSourceProvider;
 	}
 
-	public void setPropertiesProvider(PropertiesProvider propertiesProvider)
-	{
-		this.propertiesProvider = propertiesProvider;		
-	}	
-	
-	public void setDirectoryProvider(DirectoryProvider directoryProvider)
-	{
+	public void setPropertiesProvider(PropertiesProvider propertiesProvider) {
+		this.propertiesProvider = propertiesProvider;
+	}
+
+	public void setDirectoryProvider(DirectoryProvider directoryProvider) {
 		this.directoryProvider = directoryProvider;
 	}
 
-	public String getHtml()
-	{
+	public String getHtml() {
 		return html;
 	}
-	
-	public Report getReport()
-	{
+
+	public Report getReport() {
 		return report;
+	}
+
+	@Override
+	public void setServletResponse(HttpServletResponse arg0) {
+		this.response = arg0;
+
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest arg0) {
+		this.request = arg0;
+
 	}
 }
