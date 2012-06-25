@@ -137,21 +137,21 @@ table.displaytag {
 }
 table.displaytag thead tr {
 	background-color: #ececec;
-	background: #FFFFCC url(../images/table-gradient.jpg) 0 0 repeat-x;
+	background: #9999CC; 
 	font-weight: bold;
-	height: 28px;
+	height: 38px;
 	border-bottom: 1px solid;	
 }
 
 table.displaytag tr.even {
-	background-color: white;	
+	background-color: #fff;	
 	border-bottom: 1px solid;	
 }
 
 table.displaytag tr.triggered {	
 	
 	color: white;
-	background: #fff url(../images/red-gradient.gif) 0 0 repeat-x;
+	background: #fff 
 }
 
 table.displaytag tr.triggered a {			
@@ -159,7 +159,7 @@ table.displaytag tr.triggered a {
 }
 
 table.displaytag tr.odd {
-	background-color: white;
+	background-color: #fff;
 	border-bottom: 1px solid;	
 }
 table.displaytag td {
