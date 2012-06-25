@@ -246,6 +246,32 @@
         expression which points to the source object.
       </description>
     </attribute>
+    <attribute>
+      <name>keepStatus</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>boolean</type>
+      <description>
+        Preserve the current paging/sort status across session. The default is false (do not use sessions). Note that
+        for this to work properly you need to assign to each table in your application a different id.
+      </description>
+    </attribute>
+    <attribute>
+      <name>clearStatus</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>boolean</type>
+      <description>Clears the current paging/sort status saved in session.</description>
+    </attribute>
+    <attribute>
+      <name>form</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Uses post for paging/sorting links, by submitting the for with the given name. Note that this form will not be
+        created by displaytag, and it must exist in page.
+      </description>
+    </attribute>
     <example>
       <![CDATA[
 <display:table name="someList" export="true" id="row" requestURI="MyAction.do">
@@ -284,7 +310,7 @@
       <description>
         name of the property in the bean specified in the parent table tag (via the "name" attribute) which will be used
         to sort values in the column. This can be used when the column body is filled or a decorator is used and column
-        should sort on undeorated values.
+        should sort on undecorated values.
       </description>
     </attribute>
     <attribute>
@@ -397,7 +423,7 @@
       <description>
         <![CDATA[
         The base URL used to construct the dynamic link. If this attribute is provided, then the data that is shown for
-        this column is wrapped inside a &lt;a href&gt; tag with the url provided through this attribute. Typically you
+        this column is wrapped inside a <a href=""> tag with the url provided through this attribute. Typically you
         would use this attribute along with one of the struts-like param attributes (param*) to create a dynamic link so
         that each row creates a different URL based on the data that is being viewed. An empty href value will generate
         a link to the current page, preserving parameters just like for paging links.]]>
@@ -633,10 +659,10 @@ or
   <display:column property="itemName"/>
   <display:column property="price" total="true"/>
   <display:footer>
-  	<tr>
-  		<td>Total Bill:</td>
-  		<td><c:out value="${totals.column2}" /></td>
-  	<tr>
+    <tr>
+      <td>Total Bill:</td>
+      <td><c:out value="${totals.column2}" /></td>
+    <tr>
   </display:footer>
 </display:table>
 ]]>

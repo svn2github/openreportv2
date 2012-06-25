@@ -205,7 +205,7 @@
 	</bean>
 
 	<bean id="dateColumnDecorator" class="org.efs.openreports.util.DateColumnDecorator">
-		<property name="dateProvider" ref="dateProvider" />
+		<property name="format" value="MM/dd/yyyy" />
 	</bean>
 
 	<bean id="dateTimeColumnDecorator" class="org.efs.openreports.util.DateTimeColumnDecorator">
