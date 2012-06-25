@@ -1,61 +1,77 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
+<%@ taglib uri="/WEB-INF/jmesa.tld" prefix="jmesa" %>
+<%@ page language="java" pageEncoding="utf-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+
 <%@page import="org.efs.openreports.util.DisplayProperty"%>
 <%@page import="org.efs.openreports.objects.Report"%>
 
 <s:include value="Banner.jsp" />
 
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script> 
+  <script type="text/javascript" src="js/jmesa.js"></script> 
+
+  <script type="text/javascript" src="js/jquery.jmesa.js"></script> 
+  <script type="text/javascript" src="js/jquery.validate.js"></script> 
+
+
 <s:if test="report == null || !report.isDisplayInline()">
 
 <a class="back-link img-report-small" href="reportList.action"><s:text name="link.back.reports"/></a>
-<a class="back-link img-group-small" href="reportGroup.action"><s:text name="link.back.groups"/></a>  	
+<a class="back-link img-group-small" href="reportGroup.action"><s:text name="link.back.groups"/></a>    
   
 <br/>
 
 <s:actionerror/>
-	<div align="center">  
-  		<div class="important img-queryreport" id="instructions"><s:property value="report.name"/></div>  
-	</div>
-</s:if>
 
+</s:if>
+<br/>
 <div align="center">   
     
   <s:set name="results" value="results" scope="request" />  
   <s:set name="properties" value="properties" scope="request" />
   <s:set name="report" value="report" scope="request" />
+  <% DisplayProperty[] displayProperties = (DisplayProperty[]) request.getAttribute("properties");  
+  Report report = (Report) request.getAttribute("report");
   
-  <% DisplayProperty[] displayProperties = (DisplayProperty[]) request.getAttribute("properties");
-  	 Report report = (Report) request.getAttribute("report");%>
+     %>
+     <div/>
   
-  <display:table name="results" class="displayTag" sort="list" export="true" pagesize="20" requestURI="queryReportResult.action">  
-    <% for (int i=0; i < displayProperties.length; i++) { %>
-      <display:column property="<%=displayProperties[i].getName()%>" title="<%=displayProperties[i].getDisplayName()%>" sortable="true" headerClass="sortable" />
-    <% } %>
-    <display:setProperty name="export.pdf" value="true"/>
-	<display:setProperty name="export.xml" value="false"/>
-	<display:setProperty name="export.pdf.filename" value="<%=report.getName() + ".pdf"%>"/>
-	<display:setProperty name="export.csv.filename" value="<%=report.getName() + ".csv"%>"/>
-	<display:setProperty name="export.excel.filename" value="<%=report.getName() + ".xls"%>"/>	  
-  </display:table>
+  <form name="presidentsForm" action="${pageContext.request.contextPath}/QueryReport.jsp">
 
 
-  <s:if test="#session.user.scheduler">
-  
-    <s:text name="queryReport.scheduleReport"/>
-    <a href="reportOptions.action?reportId=<%=report.getId()%>&submitSchedule=true&exportType=3">CSV</a> |
-    <a href="reportOptions.action?reportId=<%=report.getId()%>&submitSchedule=true&exportType=1">Excel</a> |
-    <a href="reportOptions.action?reportId=<%=report.getId()%>&submitSchedule=true&exportType=0">PDF</a>
-  
-  </s:if>  
+        <jmesa:tableModel id="jmesareport" items="${listResults}" exportTypes="csv,excel,pdfp" var="bean">
+                <jmesa:htmlTable  caption="${report.name}" width="80%">               
+                <jmesa:htmlRow filterable="true">  
+        <c:forEach var="item" items="${query_report_properties}">
+        <jmesa:htmlColumn property="${item.name}" title="${item.displayName}" sortable="true" filterable="true"/>
+        </c:forEach>        
+        
+        
+           </jmesa:htmlRow>
+
+        </jmesa:htmlTable> 
+    </jmesa:tableModel> 
+
+    
+
+</form>
+
 
 </div>
+<script type="text/javascript">
+function onInvokeAction(id, action) {
+    setExportToLimit(id, '');
+    createHiddenInputFieldsForLimitAndSubmit(id);
+}
+function onInvokeExportAction(id) {
+                var parameterString = $.jmesa.createParameterStringForLimit(id);
+                location.href = '${pageContext.request.contextPath}/queryReportExport.action?' + parameterString;
+            }
+</script>
 
 <s:if test="report == null || !report.isDisplayInline()">
-
 <s:include value="Footer.jsp" />
 
 </s:if>
-
-
-
-	

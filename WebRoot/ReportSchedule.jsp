@@ -1,7 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-
+<%@ taglib prefix="sj" uri="/struts-jquery-tags"%>
+ <sj:head />
 <s:include value="Banner.jsp" />
-<s:head/>
 
 <style type="text/css">
    table {margin: 0px;}
@@ -18,13 +18,13 @@
 
   <a class="back-link img-report-small" href="reportList.action"><s:text name="link.back.reports"/></a>
   <a class="back-link img-group-small" href="reportGroup.action"><s:text name="link.back.groups"/></a>
-  	
+    
   <br/><br/>
   
    <div class="img-schedule important" id="instructions" style="width: 70%;">
-		<s:text name="reportSchedule.title"/> <s:property value="report.name"/>
+        <s:text name="reportSchedule.title"/> <s:property value="report.name"/>
    </div>
-		 
+         
   <form action="<s:property value="#request.get('struts.request_uri')"/>" name="scheduleDetail" class="dialog-form" style="width: 75%;">   
   
   <table class="dialog" >         
@@ -40,8 +40,8 @@
         <input type="radio" name="scheduleType" value="0" CHECKED><s:text name="label.once"/>
       </td>
       <td>
-			<input type="radio" name="scheduleType" value="5" <s:if test="scheduleType == 5">CHECKED</s:if> ><s:text name="label.hourly"/>
-	  </td>
+            <input type="radio" name="scheduleType" value="5" <s:if test="scheduleType == 5">CHECKED</s:if> ><s:text name="label.hourly"/>
+      </td>
       <td>
         <input type="radio" name="scheduleType" value="1" <s:if test="scheduleType == 1">CHECKED</s:if> ><s:text name="label.daily"/>
       </td>
@@ -54,17 +54,18 @@
       <td>
         <input type="radio" name="scheduleType" value="2" <s:if test="scheduleType == 2">CHECKED</s:if> ><s:text name="label.weekly"/>
       </td>     
-	  <td>
+      <td>
         <input type="radio" name="scheduleType" value="3" <s:if test="scheduleType == 3">CHECKED</s:if> ><s:text name="label.monthly"/>
       </td>  
       <s:if test="#session.user.advancedScheduler">      
       <td><input type="radio" name="scheduleType" value="6" <s:if test="scheduleType == 6">CHECKED</s:if> ><s:text name="label.cron"/></td>
       </s:if>
-   	</tr>        
+    </tr>        
     <tr>
       <td class="boldText"><s:text name="label.startDate"/></td>         
       <td colspan="2">
-      	<s:datetimepicker name="startDate" value="%{startDate}" theme="simple" displayFormat="%{dateFormat}"  />     
+        <sj:datepicker value="%{startDate}" minDate="today" name="startDate" displayFormat="mm/dd/yy" />
+
       </td>
       <s:if test="#session.user.advancedScheduler">  
       <td class="boldText"><s:text name="label.cronExpression"/> <font color="red">*</font></td>         
@@ -85,21 +86,21 @@
       </td>  
        <td class="boldText"><s:text name="label.numberOfHours"/><font color="red">*</font></td>         
       <td colspan="2">
-     	 <input type="text" name="hours" value="<s:property value="hours"/>" size="20" maxLength="20" />    
-      </td>      	
+         <input type="text" name="hours" value="<s:property value="hours"/>" size="20" maxLength="20" />    
+      </td>         
     </tr>   
     <s:if test="#session.user.alertUser">   
     <tr>
       <td class="boldText" width="20%"><s:text name="label.condition"/></td>
       <td colspan="6">
-        <s:select name="alertId" list="alerts" listKey="id" listValue="name" headerKey="-1" headerValue=" -- None -- " theme="simple"/>			
+        <s:select name="alertId" list="alerts" listKey="id" listValue="name" headerKey="-1" headerValue=" -- None -- " theme="simple"/>         
         <s:select name="alertOperator" list="operators" emptyOption="false" theme="simple"/>                 
         <input type="text" name="alertLimit" value="<s:property value="alertLimit"/>" size="10" maxLength="10" />      
       </td>
     </tr> 
     </s:if>  
     <s:if test="!#session.user.alertUser">   
-    	<input type="hidden" name="alertId" value="-1">
+        <input type="hidden" name="alertId" value="-1">
     </s:if>
      <tr>
       <td class="boldText"><s:text name="label.recipients"/></td>         
@@ -119,8 +120,8 @@
   
 
   <div class="button-bar" id="buttons" >
-  	    <input type="hidden" name="scheduleName" value="<s:property value="scheduleName"/>">
- 			    <input type="hidden" name="userId" value="<s:property value="userId"/>">
+        <input type="hidden" name="scheduleName" value="<s:property value="scheduleName"/>">
+                <input type="hidden" name="userId" value="<s:property value="userId"/>">
         <input type="submit" class="standardButton" name="submitScheduledReport" value="<s:text name="button.submit"/>">
   </div>
  
@@ -128,10 +129,10 @@
   </form>    
    
    <div class="error"> 
-   		<s:text name="reportSchedule.message.hours"/><br>
-   		<s:if test="#session.user.advancedScheduler">
-   		<s:text name="reportSchedule.message.cron"/>
-   		</s:if>
+        <s:text name="reportSchedule.message.hours"/><br>
+        <s:if test="#session.user.advancedScheduler">
+        <s:text name="reportSchedule.message.cron"/>
+        </s:if>
    </div>    
   
 </div>

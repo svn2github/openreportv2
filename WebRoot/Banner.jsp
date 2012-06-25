@@ -7,6 +7,7 @@
   <meta HTTP-EQUIV="Cache-Control" CONTENT="max-age=0">
   <title><s:text name="application.title"/></title>
   <link rel="stylesheet" type="text/css" href="css/yui/reset-fonts-grids.css" />
+  <link rel="stylesheet" type="text/css" href="css/jmesa.css" />
   <link href="css/openreports.css" rel="stylesheet" type="text/css">
   <!-- YUI Dependencies -->
   <script type="text/javascript" src="js/yui/yahoo-min.js"></script>
